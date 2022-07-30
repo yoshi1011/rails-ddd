@@ -1,0 +1,33 @@
+version: '3.3'
+services:
+  app:
+    build: .
+    ports:
+    - "3000:3000"
+    volumes:
+    - ./:/app:delegated
+    - packs:/app/public/packs
+    - bundle:/usr/local/bundle
+    depends_on:
+      - pgsql
+    tty: true
+    stdin_open: true
+    environment:
+      - RAILS_ENV=development
+    command: "bundle exec rails server -b '0.0.0.0'"
+
+  pgsql:
+    image: postgres:14
+    restart: always
+    ports:
+    - "5432:5432"
+    volumes:
+    - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
+
+volumes:
+  packs:
+  bundle:
+  postgres:
